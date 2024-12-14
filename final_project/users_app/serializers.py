@@ -28,11 +28,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError({"password": "Passwords do not match!"})
-        # try:
-        #     validate_password(attrs["password"])
-        # except ValidationError as e:
-        #     raise serializers.ValidationError({"password": "error"}) 
+        try:
+            validate_password(attrs["password"])
+        except ValidationError as e:
+            raise serializers.ValidationError({"password": "error"}) 
         return attrs
+   
 
     def create(self, validated_data):
         validated_data.pop("password2")
