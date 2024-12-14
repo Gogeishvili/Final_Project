@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     # My apps
-    'test_app',
     'users_app',
     # 'games_app',
     # 'orders_app',
