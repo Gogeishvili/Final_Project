@@ -5,6 +5,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r"users", views.UserViewSet, basename="users")
+router.register(r"bookModels", views.BookModelViewSet, basename="bookModels")
 
 
 urlpatterns = [
