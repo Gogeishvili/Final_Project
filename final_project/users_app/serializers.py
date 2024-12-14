@@ -3,11 +3,17 @@ from rest_framework.serializers import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from .models import *
 
+class WalletSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ["money"]
+
 
 class UserSerializer(serializers.ModelSerializer):
+    wallet = WalletSerializer(many=True, read_only=True)
     class Meta:
         model = CustomUser
-        fields = ["id", "username", "email"]
+        fields = ["id", "username", "email","wallet"]
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -40,12 +46,5 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-class WalletSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Wallet
-        fields = ["id","user", "money"]
 
-class WalletUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Wallet
-        fields = ["money"]
+

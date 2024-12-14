@@ -3,7 +3,6 @@ from django.db import models
 from decimal import Decimal
 
 
-
 class CustomUserManager(BaseUserManager):
 
     def create_user(self, username, email, password=None, **extra_fields):
@@ -19,19 +18,22 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(username, email, password, **extra_fields)
+    
+    def get_user_with_wallets(self):
+        return self.prefetch_related('wallet')
 
 
 class WalletManager(models.Manager):
     def create_wallet_for_user(self, user):
-        return self.create(user=user, money=Decimal('0.00'))
-    
-    def add_money_to_wallet(self, user, amount):
+        return self.create(user=user, money=Decimal("0.00"))
+
+    def add_money_to_wallet_by_user(self, user, amount):
         wallet, created = self.get_or_create(user=user)
         wallet.money += amount
         wallet.save()
         return wallet
-    
-    def pay_money_from_wallet(self, user, amount):
+
+    def pay_money_from_wallet_by_user(self, user, amount):
         wallet, created = self.get_or_create(user=user)
         if wallet.money >= amount:
             wallet.money -= amount
@@ -39,8 +41,7 @@ class WalletManager(models.Manager):
             return wallet
         else:
             raise ValueError("Insufficient balance")
-    
-    def get_current_money_by_user(self,user):
+
+    def get_current_money_by_user(self, user):
         wallet, created = self.get_or_create(user=user)
         return wallet.money
-

@@ -13,17 +13,20 @@ from .permissions import *
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.get_user_with_wallets()
     serializer_class = SerializerFactory(
         default=UserSerializer,
         create=UserRegisterSerializer,
+        
     )
     lookup_field = "username"
 
+
     def get_permissions(self):
-        if self.action == "destroy" or "update":
+        if self.action in ["destroy", "update"]:
             return [CanDeleteOnlySelf()]
         return super().get_permissions()
+
 
 
 class WalletViewSet(
@@ -37,40 +40,58 @@ class WalletViewSet(
     )
     queryset = Wallet.objects.all()
 
-    @action(detail=True, methods=['post'], url_path='add_money')
-    def add_money(self, request, pk=None):
+    @action(detail=False, methods=["post"], url_path="add_money")
+    def add_money(self, request):
         user = request.user
         amount = Decimal(request.data.get("money", 0))
+
+       
         if amount <= 0:
-            return Response({"error": "Amount must be greater than zero."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Amount must be greater than zero."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
-            wallet = Wallet.objects.add_money_to_wallet(user, amount)
+            wallet = Wallet.objects.add_money_to_wallet_by_user(user, amount)
             return Response(
-                {"message": f"{amount} added to your wallet.", "current_balance": wallet.money},
-                status=status.HTTP_200_OK
+                {
+                    "message": f"{amount} added to your wallet.",
+                    "current_balance": wallet.money,
+                },
+                status=status.HTTP_200_OK,
             )
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
-    
-    @action(detail=True, methods=['post'], url_path='pay_money')
-    def pay_money(self,request,pk=None):
-        user=request.user
+
+
+    @action(detail=False, methods=["post"], url_path="pay_money")
+    def pay_money(self, request):
+        user = request.user
         amount = Decimal(request.data.get("money", 0))
-        current_money=Wallet.objects.get_current_money_by_user(user=user)
+        current_money = Wallet.objects.get_current_money_by_user(user=user)
+
+        
         if current_money < amount:
-            return Response({"error": "you dont have enough money"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "You don't have enough money."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if amount <= 0:
-            return Response({"error": "Amount must be greater than zero."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Amount must be greater than zero."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
-            wallet = Wallet.objects.pay_money_from_wallet(user, amount)
+            wallet = Wallet.objects.pay_money_from_wallet_by_user(user, amount)
             return Response(
-                {"message": f"{amount} added to your wallet.", "current_balance": wallet.money},
-                status=status.HTTP_200_OK
+                {
+                    "message": f"{amount} deducted from your wallet.",
+                    "current_balance": wallet.money,
+                },
+                status=status.HTTP_200_OK,
             )
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-   
