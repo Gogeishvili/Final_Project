@@ -1,6 +1,8 @@
 from rest_framework import viewsets
 from helpers import SerializerFactory
 from rest_framework.views import APIView
+from rest_framework import generics, mixins, views
+from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
@@ -23,21 +25,33 @@ class UserViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
 
-class WalletViewSet(viewsets.ModelViewSet):
+class WalletViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    GenericViewSet,
+):
+
     permission_classes = [IsAuthenticated]
     serializer_class = WalletSerializer
+    queryset = Wallet.objects.all()
 
-    def list(self, request):
-        user = request.user
+    def retrieve(self, request, *args, **kwargs):
         try:
-            wallet = Wallet.objects.get_wallet_by_user(user=user)
+            wallet = Wallet.objects.get_wallet_by_user(request.user)
+            return Response(
+                {"current_balance": wallet.money}, status=status.HTTP_200_OK
+            )
         except Wallet.DoesNotExist:
-            return Response({"error": "Wallet not found."})
-
-        return Response({"current_balance": wallet.money})
+            return Response(
+                {"error": "Wallet not found."}, status=status.HTTP_404_NOT_FOUND
+            )
 
     def create(self, request):
         user = request.user
+        print(user)
         amount = Decimal(request.data.get("money", 0))
         if amount <= 0:
             return Response(
@@ -53,39 +67,3 @@ class WalletViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK,
         )
-
-    def update(self, request):
-        user = request.user
-        amount = Decimal(request.data.get("money", 0))
-
-        if amount is None:
-            return Response(
-                {"error": "Amount is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        try:
-            amount = Decimal(amount)
-        except:
-            return Response(
-                {"error": "Invalid amount"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if amount <= 0:
-            return Response(
-                {"error": "Amount must be greater than zero."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            wallet = Wallet.objects.deduct_money_from_wallet(user, amount)
-            return Response(
-                {
-                    "message": f"{amount} deducted from your wallet.",
-                    "current_balance": wallet.money,
-                },
-                status=status.HTTP_200_OK,
-            )
-        except ValueError:
-            return Response(
-                {"error": "Insufficient balance."}, status=status.HTTP_400_BAD_REQUEST
-            )

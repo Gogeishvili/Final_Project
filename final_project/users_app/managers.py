@@ -26,25 +26,20 @@ class WalletManager(models.Manager):
         return self.create(user=user, money=0)
     
     def add_money_to_wallet(self, user, amount):
-        # Convert amount to Decimal
-        amount = Decimal(amount)
         wallet, created = self.get_or_create(user=user)
         wallet.money += amount
         wallet.save()
         return wallet
     
     def deduct_money_from_wallet(self, user, amount):
-        # Convert amount to Decimal
         amount = Decimal(amount)
         wallet, created = self.get_or_create(user=user)
-        
-        # Check if the wallet has enough money for the deduction
         if wallet.money >= amount:
             wallet.money -= amount
             wallet.save()
             return wallet
         else:
-            raise ValueError("Insufficient balance")  # or handle it as needed
+            raise ValueError("Insufficient balance")
 
     def get_wallet_by_user(self, user):
         try:
