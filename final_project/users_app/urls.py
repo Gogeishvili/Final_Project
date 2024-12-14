@@ -5,6 +5,7 @@ from .views import *
 
 router = routers.DefaultRouter()
 router.register(r"users", UserViewSet, basename="users")
+router.register(r'wallet', WalletViewSet, basename='wallet')
 
 
 

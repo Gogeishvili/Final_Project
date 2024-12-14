@@ -31,11 +31,16 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         try:
             validate_password(attrs["password"])
         except ValidationError as e:
-            raise serializers.ValidationError({"password": "error"}) 
+            raise serializers.ValidationError({"password": "error"})
         return attrs
-   
 
     def create(self, validated_data):
         validated_data.pop("password2")
-        user=CustomUser.objects.create_user(**validated_data)
+        user = CustomUser.objects.create_user(**validated_data)
         return user
+
+
+class WalletSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ["user", "money"]

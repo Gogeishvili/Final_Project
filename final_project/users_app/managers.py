@@ -1,4 +1,6 @@
 from django.contrib.auth.models import BaseUserManager
+from django.db import models
+from decimal import Decimal
 
 
 
@@ -17,3 +19,35 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(username, email, password, **extra_fields)
+
+
+class WalletManager(models.Manager):
+    def create_wallet_for_user(self, user):
+        return self.create(user=user, money=0)
+    
+    def add_money_to_wallet(self, user, amount):
+        # Convert amount to Decimal
+        amount = Decimal(amount)
+        wallet, created = self.get_or_create(user=user)
+        wallet.money += amount
+        wallet.save()
+        return wallet
+    
+    def deduct_money_from_wallet(self, user, amount):
+        # Convert amount to Decimal
+        amount = Decimal(amount)
+        wallet, created = self.get_or_create(user=user)
+        
+        # Check if the wallet has enough money for the deduction
+        if wallet.money >= amount:
+            wallet.money -= amount
+            wallet.save()
+            return wallet
+        else:
+            raise ValueError("Insufficient balance")  # or handle it as needed
+
+    def get_wallet_by_user(self, user):
+        try:
+            return self.get(user=user)
+        except Wallet.DoesNotExist:
+            return None  # Return None if no wallet is found for the user
