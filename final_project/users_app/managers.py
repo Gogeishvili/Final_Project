@@ -23,7 +23,7 @@ class CustomUserManager(BaseUserManager):
 
 class WalletManager(models.Manager):
     def create_wallet_for_user(self, user):
-        return self.create(user=user, money=0)
+        return self.create(user=user, money=Decimal('0.00'))
     
     def add_money_to_wallet(self, user, amount):
         wallet, created = self.get_or_create(user=user)
@@ -31,8 +31,7 @@ class WalletManager(models.Manager):
         wallet.save()
         return wallet
     
-    def deduct_money_from_wallet(self, user, amount):
-        amount = Decimal(amount)
+    def pay_money_from_wallet(self, user, amount):
         wallet, created = self.get_or_create(user=user)
         if wallet.money >= amount:
             wallet.money -= amount
@@ -40,9 +39,8 @@ class WalletManager(models.Manager):
             return wallet
         else:
             raise ValueError("Insufficient balance")
+    
+    def get_current_money_by_user(self,user):
+        wallet, created = self.get_or_create(user=user)
+        return wallet.money
 
-    def get_wallet_by_user(self, user):
-        try:
-            return self.get(user=user)
-        except Wallet.DoesNotExist:
-            return None  # Return None if no wallet is found for the user

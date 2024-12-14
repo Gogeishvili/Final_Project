@@ -43,4 +43,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class WalletSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ["user", "money"]
+        fields = ["id","user", "money"]
+
+class WalletUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ["money"]
