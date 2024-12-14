@@ -14,11 +14,32 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="GameStore API",
+        default_version='v1',
+        description="API documentation for the GameStore project",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@gamestore.local"),
+        license=openapi.License(name="License"),
+    ),
+    public=True,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('test/', include('test_app.urls'), name="test_app"),
-    path('api-auth/', include('rest_framework.urls')),
+    path('api/', include('users_app.urls')),  
+    # path('api/', include('games_app.urls')),  
+    # path('api/', include('orders_app.urls')),
+    # path('test/', include('test_app.urls'), name="test_app"),
+    path('api-auth/', include('rest_framework.urls')), 
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0),
+         name='schema-swagger-ui'),
 ]

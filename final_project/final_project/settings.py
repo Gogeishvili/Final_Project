@@ -38,8 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_yasg',
     # My apps
     'test_app',
+    'users_app',
+    # 'games_app',
+    # 'orders_app',
 ]
 
 MIDDLEWARE = [
@@ -119,6 +123,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static_common'
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -129,9 +137,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # REST
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication', 
+        'rest_framework.authentication.SessionAuthentication',
+    ],
 }
+
+
+# Celery
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+
+# Cors
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+
+
