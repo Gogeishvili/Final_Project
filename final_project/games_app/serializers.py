@@ -1,13 +1,17 @@
 from rest_framework import serializers
+from users_app.models import CustomUser
 from .models import Game
 
 
+
+class AuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ["id", "username"]
+
 class GameSerializer(serializers.ModelSerializer):
-    author_details = serializers.SerializerMethodField()
+    author = AuthorSerializer()
 
     class Meta:
         model = Game
-        fields = ["id", "name", "price", "author", "author_details"]
-
-    def get_author_details(self, obj):
-        return {"id": obj.author.id, "name": obj.author.username}
+        fields = ["id", "name", "price", "author"]
