@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework.serializers import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from helpers import validate_string_match, validate_password_strength
 from games_app.models import Game
