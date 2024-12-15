@@ -71,6 +71,7 @@ class WalletViewSet(
             validate_enogh_amount(current_money, amount)
 
             wallet = Wallet.objects.pay_money_from_wallet_by_user(user, amount)
+            
             return Response(
                 {
                     "message": f"{amount} deducted from your wallet.",

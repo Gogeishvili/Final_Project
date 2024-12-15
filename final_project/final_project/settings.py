@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     # My apps
     'users_app',
-    # 'games_app',
+    'games_app',
     # 'orders_app',
 ]
 
