@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from django.contrib.auth.password_validation import validate_password
+from helpers import validate_string_match,validate_password_strength
 from .models import *
 
 class WalletSerializer(serializers.ModelSerializer):
@@ -32,12 +33,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         fields = ["username", "email", "password", "password2"]
 
     def validate(self, attrs):
-        if attrs["password"] != attrs["password2"]:
-            raise serializers.ValidationError({"password": "Passwords do not match!"})
-        try:
-            validate_password(attrs["password"])
-        except ValidationError as e:
-            raise serializers.ValidationError({"password": "error"})
+        password = attrs.get("password")
+        password2 = attrs.get("password2")
+        validate_string_match(password, password2)
+        validate_password_strength(password)
         return attrs
 
     def create(self, validated_data):

@@ -1,5 +1,4 @@
 from rest_framework import viewsets
-from helpers import SerializerFactory
 from rest_framework.views import APIView
 from rest_framework import generics, mixins, views
 from rest_framework.viewsets import GenericViewSet
@@ -7,9 +6,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.decorators import action
+from helpers import (
+    SerializerFactory,
+    CanDeleteOnlySelf,
+    validate_positive_amount,
+    validate_enogh_amount,
+)
 from .serializers import *
 from .models import *
-from .permissions import *
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -17,16 +21,13 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = SerializerFactory(
         default=UserSerializer,
         create=UserRegisterSerializer,
-        
     )
     lookup_field = "username"
-
 
     def get_permissions(self):
         if self.action in ["destroy", "update"]:
             return [CanDeleteOnlySelf()]
         return super().get_permissions()
-
 
 
 class WalletViewSet(
@@ -45,14 +46,9 @@ class WalletViewSet(
         user = request.user
         amount = Decimal(request.data.get("money", 0))
 
-       
-        if amount <= 0:
-            return Response(
-                {"error": "Amount must be greater than zero."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         try:
+            validate_positive_amount(amount)
+
             wallet = Wallet.objects.add_money_to_wallet_by_user(user, amount)
             return Response(
                 {
@@ -61,30 +57,19 @@ class WalletViewSet(
                 },
                 status=status.HTTP_200_OK,
             )
+
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
 
     @action(detail=False, methods=["post"], url_path="pay_money")
     def pay_money(self, request):
         user = request.user
         amount = Decimal(request.data.get("money", 0))
         current_money = Wallet.objects.get_current_money_by_user(user=user)
-
-        
-        if current_money < amount:
-            return Response(
-                {"error": "You don't have enough money."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if amount <= 0:
-            return Response(
-                {"error": "Amount must be greater than zero."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         try:
+            validate_positive_amount(amount)
+            validate_enogh_amount(current_money, amount)
+
             wallet = Wallet.objects.pay_money_from_wallet_by_user(user, amount)
             return Response(
                 {
