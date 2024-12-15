@@ -4,14 +4,27 @@ from .models import Game
 
 
 
-class AuthorSerializer(serializers.ModelSerializer):
+class AuthorNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ["id", "username"]
 
-class GameSerializer(serializers.ModelSerializer):
-    author = AuthorSerializer()
+class GameViewSerializer(serializers.ModelSerializer):
+    author = AuthorNestedSerializer()
 
     class Meta:
         model = Game
         fields = ["id", "name", "price", "author"]
+
+class GameCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model=Game
+        fields=["name","price","author"]
+
+class GameUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Game
+        fields=["price"]
+
+

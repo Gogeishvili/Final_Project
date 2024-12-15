@@ -11,13 +11,14 @@ from helpers import (
     CanDeleteOnlySelf,
     validate_positive_amount,
     validate_enogh_amount,
+    IsAuthorOrReadOnly
 )
 from .serializers import *
 from .models import *
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.get_user_with_wallets()
+    queryset = CustomUser.objects.get_user_with_all_details()
     serializer_class = SerializerFactory(
         default=UserSerializer,
         create=UserRegisterSerializer,
@@ -25,7 +26,7 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = "username"
 
     def get_permissions(self):
-        if self.action in ["destroy", "update"]:
+        if self.action in ["destroy", "update",'partial_update']:
             return [CanDeleteOnlySelf()]
         return super().get_permissions()
 
@@ -37,7 +38,7 @@ class WalletViewSet(
 ):
     permission_classes = [IsAuthenticated]
     serializer_class = SerializerFactory(
-        default=WalletSerializer,
+        default=WalletNestedSerializer,
     )
     queryset = Wallet.objects.all()
 

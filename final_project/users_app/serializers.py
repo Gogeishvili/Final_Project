@@ -1,20 +1,30 @@
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from django.contrib.auth.password_validation import validate_password
-from helpers import validate_string_match,validate_password_strength
+from helpers import validate_string_match, validate_password_strength
+from games_app.models import Game
 from .models import *
 
-class WalletSerializer(serializers.ModelSerializer):
+
+class WalletNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
         fields = ["money"]
 
 
+class GameNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Game
+        fields = ["name", "price"]
+
+
 class UserSerializer(serializers.ModelSerializer):
-    wallet = WalletSerializer(many=True, read_only=True)
+    wallet = WalletNestedSerializer(many=True, read_only=True)
+    games = GameNestedSerializer(many=True, read_only=True)
+
     class Meta:
         model = CustomUser
-        fields = ["id", "username", "email","wallet"]
+        fields = ["id", "username", "email", "wallet","games"]
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -43,7 +53,3 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         validated_data.pop("password2")
         user = CustomUser.objects.create_user(**validated_data)
         return user
-
-
-
-

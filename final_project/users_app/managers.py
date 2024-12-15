@@ -19,8 +19,8 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(username, email, password, **extra_fields)
     
-    def get_user_with_wallets(self):
-        return self.prefetch_related('wallet')
+    def get_user_with_all_details(self):
+        return self.prefetch_related('wallet','games')
 
 
 class WalletManager(models.Manager):
