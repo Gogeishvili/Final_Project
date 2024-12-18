@@ -11,6 +11,7 @@ from helpers import SerializerFactory,IsAuthorOrReadOnly
 from orders_app.models import Cart
 from .serializers import *
 from .models import *
+from .tasks import add_game_to_cart
 
 
 class GameViewSet(viewsets.ModelViewSet):
@@ -39,7 +40,7 @@ class GameViewSet(viewsets.ModelViewSet):
         if game.author == user:
             raise PermissionDenied("You cannot add your own game to the cart.")
 
-       
+        # add_game_to_cart.delay(user.id, game.id)
         try:
             cart = Cart.objects.add_game_in_cart(user, game)  
         except ValueError as e:
