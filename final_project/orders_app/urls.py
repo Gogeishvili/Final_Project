@@ -3,7 +3,7 @@ from rest_framework import routers
 from .views import *
 
 router = routers.DefaultRouter()
-# router.register(r"games", GameViewSet, basename="games")
+router.register(r"carts", CartViewSet, basename="carts")
 
 
 
