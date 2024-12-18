@@ -20,7 +20,7 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(username, email, password, **extra_fields)
     
     def get_user_with_all_details(self):
-        return self.prefetch_related('wallet','games','cart')
+        return self.prefetch_related('wallet','games','cart','purchases')
 
 
 class WalletManager(models.Manager):

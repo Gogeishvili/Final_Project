@@ -13,4 +13,9 @@ class Cart(models.Model):
         return f"{self.user.username}'s Cart"
     
 
+class Purchase(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="purchases")
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name="purchases")
 
+    def __str__(self):
+        return f"{self.user.username} purchased {self.game.name} on {self.purchased_at}"
