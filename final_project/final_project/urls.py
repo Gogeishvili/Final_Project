@@ -37,7 +37,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/user/', include('users_app.urls')),  
     path('api/game/', include('games_app.urls')),  
-    # path('api/', include('orders_app.urls')),
+    path('api/order/', include('orders_app.urls')),
     path('api-auth/', include('rest_framework.urls')), 
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0),
          name='schema-swagger-ui'),
