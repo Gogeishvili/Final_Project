@@ -9,3 +9,5 @@ from .models import Cart
 class CartViewSet(viewsets.ModelViewSet):
     serializer_class=CartSerilizer
     queryset=Cart.objects.all()
+
+    
