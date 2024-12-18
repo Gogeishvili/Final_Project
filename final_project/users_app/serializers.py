@@ -36,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
     wallet = WalletNestedSerializer(many=True, read_only=True)
     games = GameNestedSerializer(many=True, read_only=True)
     cart = CartNestedSerializer(many=False, read_only=True)
-    purchases = PurchiseNestedSerializer(many=False, read_only=True)
+    purchases = PurchiseNestedSerializer(many=True, read_only=True)
 
     class Meta:
         model = CustomUser
