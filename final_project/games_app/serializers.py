@@ -2,8 +2,6 @@ from rest_framework import serializers
 from users_app.models import CustomUser
 from .models import Game
 
-
-
 class AuthorNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser

@@ -1,21 +1,18 @@
-from rest_framework import viewsets
-from rest_framework.views import APIView
-from rest_framework import generics, mixins, views
+from rest_framework import  mixins
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.db.models import Count
-from users_app.models import Wallet
 from helpers.validators import *
+from wallet_app.models import Wallet
 from .serlializers import *
 from .models import Cart
 
 
 class CartViewSet(
     mixins.RetrieveModelMixin,
-    mixins.DestroyModelMixin,
     mixins.ListModelMixin,
     GenericViewSet,
 ):
@@ -28,7 +25,13 @@ class CartViewSet(
         user = request.user
 
         try:
-            cart = Cart.objects.get(user=user)
+            cart = Cart.objects.get(id=pk)
+            if cart.user != user:
+                return Response(
+                    {"error": "You are not authorized to purchase this cart."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
             if not cart.games.exists():
                 return Response(
                     {"error": "Your cart is empty."}, status=status.HTTP_400_BAD_REQUEST
@@ -40,9 +43,7 @@ class CartViewSet(
             validate_enogh_amount(current_money, total_cost)
             Wallet.objects.pay_money_from_wallet_by_user(user, total_cost)
 
-            purchases = []
-            for game in cart.games.all():
-                purchases.append(Purchase(user=user, game=game))
+            purchases = [Purchase(user=user, game=game) for game in cart.games.all()]
             Purchase.objects.bulk_create(purchases)
 
             cart.games.clear()

@@ -1,6 +1,4 @@
 from rest_framework import serializers
-from django.contrib.auth.password_validation import validate_password
-from helpers import validate_string_match, validate_password_strength
 from users_app.models import CustomUser
 from games_app.models import Game
 from .models import *
@@ -15,8 +13,6 @@ class GameNestedSerializer(serializers.ModelSerializer):
         model=Game
         fields=['name','price']
 
-
-
 class CartSerilizer(serializers.ModelSerializer):
     user=UserNestedeSerializer()
     games=GameNestedSerializer(many=True)
@@ -24,20 +20,13 @@ class CartSerilizer(serializers.ModelSerializer):
         model = Cart
         fields = ['id','user','games']
 
-
-
-class UserNestedSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ['id', 'username', 'email'] 
-
 class GameNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = ['id', 'name', 'price']  
 
 class PurchaseSerializer(serializers.ModelSerializer):
-    user = UserNestedSerializer()  
+    user = UserNestedeSerializer()  
     game = GameNestedSerializer()  
 
     class Meta:

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'users_app',
     'games_app',
     'orders_app',
+    'wallet_app'
 ]
 
 MIDDLEWARE = [

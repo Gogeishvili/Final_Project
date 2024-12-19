@@ -6,7 +6,3 @@ from .models import *
 class AuthorAdmin(admin.ModelAdmin):
     fields = ["email", "username", "password"]
 
-
-@admin.register(Wallet)
-class WalletAdmin(admin.ModelAdmin):
-    fields = ["money", "user"]
