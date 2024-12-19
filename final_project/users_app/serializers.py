@@ -69,3 +69,15 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         validated_data.pop("password2")
         user = CustomUser.objects.create_user(**validated_data)
         return user
+
+
+class UserNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ["username"]
+
+class WalletSerializer(serializers.ModelSerializer):
+    user=UserNestedSerializer(read_only=True)
+    class Meta:
+        model = Wallet
+        fields = ["id","money","user"]

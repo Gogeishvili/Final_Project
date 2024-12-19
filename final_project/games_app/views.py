@@ -20,7 +20,7 @@ class GameViewSet(viewsets.ModelViewSet):
         create=GameCreateSerializer,
         update=GameUpdateSerializer,
     )
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [IsAuthorOrReadOnly,IsAuthenticated]
 
     queryset = Game.objects.all()
     lookup_field = "name"

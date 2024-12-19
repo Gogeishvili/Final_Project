@@ -8,7 +8,7 @@ class CustomCartManager(BaseUserManager):
     def add_game_in_cart(self, user, game, **extra_fields):
         try:
             cart = user.cart
-        except cart.DoesNotExist:  # შეცვლილი
+        except cart.DoesNotExist:
             cart = self.create(user=user)
 
         if cart.games.filter(id=game.id).exists():
@@ -16,5 +16,6 @@ class CustomCartManager(BaseUserManager):
 
         cart.games.add(game)
         return cart
+
     
     
