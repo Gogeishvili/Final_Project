@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from drf_yasg.utils import swagger_auto_schema
 from helpers.validators import *
 from wallet_app.models import Wallet
 from .serlializers import *
@@ -66,10 +65,6 @@ class PurchaseViewSet(mixins.ListModelMixin, GenericViewSet):
     queryset = Purchase.objects.all()
     serializer_class = PurchaseSerializer
     permission_classes = [IsAuthenticated]
-
-    @swagger_auto_schema(skip=True)
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
 
     @action(detail=False, methods=["get"], url_path="most_sold_games")
     def most_sold_games(self, request):
