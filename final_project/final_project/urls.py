@@ -25,9 +25,6 @@ schema_view = get_schema_view(
         title="GameStore API",
         default_version="v1",
         description="API documentation for the GameStore project",
-        terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="contact@gamestore.local"),
-        license=openapi.License(name="License"),
     ),
     public=True,
 )

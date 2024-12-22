@@ -4,40 +4,36 @@ from games_app.models import Game
 from .models import *
 
 
-class UserNestedeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ["username"]
-
-
-class GameNestedSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Game
-        fields = ["name", "price"]
-
-
 class CartSerilizer(serializers.ModelSerializer):
-    user = UserNestedeSerializer()
-    games = GameNestedSerializer(many=True)
+    user = serializers.CharField(source="user.username")
+    games = serializers.SerializerMethodField()
 
     class Meta:
         model = Cart
         fields = ["id", "user", "games"]
 
-
-class GameNestedSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Game
-        fields = ["id", "name", "price"]
+    def get_games(self, obj):
+        return [
+            {"id": game.id, "name": game.name, "price": game.price}
+            for game in obj.games.all()
+        ]
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
-    user = UserNestedeSerializer()
-    game = GameNestedSerializer()
+    user = serializers.CharField(source="user.username")
+    game = serializers.SerializerMethodField()
 
     class Meta:
         model = Purchase
         fields = ["id", "user", "game"]
+
+    def get_game(self, obj):
+
+        return {
+            "id": obj.game.id,
+            "name": obj.game.name,
+            "price": obj.game.price,
+        }
 
 
 class MostSoldGameSerializer(serializers.Serializer):
