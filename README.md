@@ -19,7 +19,7 @@ This project is a Django-based gaming platform where users can manage wallets, p
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/django-gaming-platform.git
+   git clone https://github.com/Gogeishvili/Final_Project.git
    cd django-gaming-platform
    ```
 
