@@ -1,6 +1,4 @@
 from rest_framework import serializers
-from users_app.models import CustomUser
-from games_app.models import Game
 from .models import *
 
 
