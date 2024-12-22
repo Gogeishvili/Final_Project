@@ -151,7 +151,7 @@ REST_FRAMEWORK = {
 
 
 # Celery
-CELERY_BROKER_URL = 'redis://localhost:6379/0' 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
@@ -163,3 +163,10 @@ CORS_ALLOWED_ORIGINS = [
 
 
 AUTH_USER_MODEL='users_app.CustomUser'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}

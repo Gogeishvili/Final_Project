@@ -4,11 +4,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.decorators import action
+from django.core.cache import cache
 from helpers import SerializerFactory,IsAuthorOrReadOnly
 from orders_app.models import Cart
 from .serializers import *
 from .models import *
-from .tasks import add_game_to_cart
+from orders_app.tasks import add_game_to_cart
 
 
 class GameViewSet(viewsets.ModelViewSet):
@@ -21,6 +22,18 @@ class GameViewSet(viewsets.ModelViewSet):
 
     queryset = Game.objects.all()
     lookup_field = "name"
+
+    def list(self, request, *args, **kwargs):
+        cached_games = cache.get("all_games")
+        if not cached_games:
+            print("Cache NO")
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            cached_games = serializer.data
+            cache.set("all_games", cached_games, timeout=60*5) 
+        else:
+            print("Cache YES")
+        return Response(cached_games)
 
     @action(detail=True, methods=["get"], url_path="add_game_cart", permission_classes=[IsAuthenticated])
     def add_game_cart(self, request, name=None):
@@ -37,7 +50,11 @@ class GameViewSet(viewsets.ModelViewSet):
         if game.author == user:
             raise PermissionDenied("You cannot add your own game to the cart.")
 
+
+        # CELERY
         # add_game_to_cart.delay(user.id, game.id)
+
+        # NO CELERY
         try:
             cart = Cart.objects.add_game_in_cart(user, game)  
         except ValueError as e:
