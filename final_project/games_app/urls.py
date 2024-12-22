@@ -6,7 +6,6 @@ router = routers.DefaultRouter()
 router.register(r"games", GameViewSet, basename="games")
 
 
-
 urlpatterns = [
     path("", include(router.urls)),
 ]

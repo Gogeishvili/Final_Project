@@ -16,7 +16,6 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(username, email, password, **extra_fields)
-    
-    def get_user_with_all_details(self):
-        return self.prefetch_related('wallet','games','cart','purchases')
 
+    def get_user_with_all_details(self):
+        return self.prefetch_related("wallet", "games", "cart", "purchases")

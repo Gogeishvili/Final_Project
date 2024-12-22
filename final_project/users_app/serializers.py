@@ -12,22 +12,26 @@ class WalletNestedSerializer(serializers.ModelSerializer):
         model = Wallet
         fields = ["money"]
 
+
 class GameNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = ["name", "price"]
+
 
 class CartNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = "__all__"
 
+
 class PurchiseNestedSerializer(serializers.ModelSerializer):
     game_name = serializers.CharField(source="game.name", read_only=True)
 
     class Meta:
         model = Purchase
-        fields = ["id", "game_name"] 
+        fields = ["id", "game_name"]
+
 
 class UserSerializer(serializers.ModelSerializer):
     wallet = WalletNestedSerializer(many=True, read_only=True)
@@ -38,6 +42,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ["id", "username", "email", "wallet", "games", "cart", "purchases"]
+
 
 class UserRegisterSerializer(serializers.ModelSerializer):
 
@@ -65,5 +70,3 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         validated_data.pop("password2")
         user = CustomUser.objects.create_user(**validated_data)
         return user
-
-

@@ -1,10 +1,10 @@
-from rest_framework import  mixins
+from django.db.models import Count
+from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from django.db.models import Count
 from helpers.validators import *
 from wallet_app.models import Wallet
 from .serlializers import *
@@ -29,7 +29,7 @@ class CartViewSet(
             if cart.user != user:
                 return Response(
                     {"error": "You are not authorized to purchase this cart."},
-                    status=status.HTTP_403_FORBIDDEN
+                    status=status.HTTP_403_FORBIDDEN,
                 )
 
             if not cart.games.exists():

@@ -1,6 +1,7 @@
 from django.db import models
 from decimal import Decimal
 
+
 class WalletManager(models.Manager):
     def create_wallet_for_user(self, user):
         return self.create(user=user, money=Decimal("0.00"))

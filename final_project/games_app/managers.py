@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class GameManager(models.Manager):
     def get_games_by_author(self, author):
         return self.filter(author=author)

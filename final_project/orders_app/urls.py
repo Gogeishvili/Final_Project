@@ -7,7 +7,6 @@ router.register(r"carts", CartViewSet, basename="carts")
 router.register(r"purchase", PurchaseViewSet, basename="purchase")
 
 
-
 urlpatterns = [
     path("", include(router.urls)),
 ]

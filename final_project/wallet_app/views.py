@@ -1,5 +1,4 @@
-
-from rest_framework import mixins 
+from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -13,6 +12,7 @@ from helpers import (
 )
 from .serializers import *
 from .models import *
+
 
 class WalletViewSet(
     mixins.RetrieveModelMixin,
