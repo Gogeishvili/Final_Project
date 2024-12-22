@@ -4,14 +4,21 @@ This project is a Django-based gaming platform where users can manage wallets, p
 
 ## Project Structure
 ```
+final_project/
+├── final_project
+│
+├── games_app
+│
+├── helpers
+│
+├── order_app
+│ 
+├── static_common
+│ 
 ├── user_app
 │   
 ├── wallet_app
-│  
-├── order_app
-│   
-├── games_app
-│   
+│    
 └── README.md
 ```
 
