@@ -47,4 +47,24 @@ class GameViewSet(viewsets.ModelViewSet):
             {"message": f"Game '{game.name}' has been added to your cart."},
             status=status.HTTP_200_OK,
         )
-        
+    
+    @action(detail=False, methods=["get"], url_path="by_author", permission_classes=[IsAuthenticated])
+    def by_author(self, request):
+        games = Game.objects.get_games_by_author(request.user)
+        serializer = self.get_serializer(games, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["get"], url_path="in_price_range", permission_classes=[IsAuthenticated])
+    def in_price_range(self, request):
+        min_price = request.query_params.get("min_price", 0)
+        max_price = request.query_params.get("max_price", 50)
+
+        try:
+            min_price = float(min_price)
+            max_price = float(max_price)
+        except ValueError:
+            return Response({"error": "Invalid price range."}, status=status.HTTP_400_BAD_REQUEST)
+
+        games = Game.objects.get_games_in_price_range(min_price, max_price)
+        serializer = self.get_serializer(games, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
