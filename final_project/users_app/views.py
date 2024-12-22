@@ -1,5 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
+
 from helpers import (
     SerializerFactory,
     CanDeleteOnlySelf,
@@ -17,6 +19,8 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
+        if self.action == "create":
+            return [AllowAny()]
         if self.action in ["destroy", "update", "partial_update"]:
             return [CanDeleteOnlySelf()]
         return super().get_permissions()
