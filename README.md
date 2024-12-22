@@ -104,9 +104,3 @@ This project is a Django-based gaming platform where users can manage wallets, p
 - `price` - Game price
 - `author` - Creator of game
 
-## Running Tests
-
-To run the tests:
-```bash
-python manage.py test
-```
